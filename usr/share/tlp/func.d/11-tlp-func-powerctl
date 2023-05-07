@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# tlp-func-powerctl - Change Power Profile when plug or unplug 
+#
+# Copyright (c) 2023 Bruno Goncalves <bigbruno gmail>
+# This software is licensed under the GPL v2 or later.
+
+
+if [ "$(acpi -a | awk '{print $3}' | head -n1)" = "off-line" ];then
+    powerprofilesctl set $(cat /var/lib/power-profiles-daemon/state_bat.conf)
+else
+    powerprofilesctl set $(cat /var/lib/power-profiles-daemon/state_ac.conf)
+fi

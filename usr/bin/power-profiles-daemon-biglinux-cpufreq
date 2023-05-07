@@ -1,5 +1,16 @@
 #!/bin/bash
 
+
+# if not have bat file use power-saver as default
+if [ ! -e "/var/lib/power-profiles-daemon/state_bat.conf" ]; then
+    echo power-saver > /var/lib/power-profiles-daemon/state_bat.conf
+fi
+
+# if not have ac file use power-saver as default
+if [ ! -e "/var/lib/power-profiles-daemon/state_ac.conf" ]; then
+    echo balanced > /var/lib/power-profiles-daemon/state_bat.conf
+fi
+
 # Read from power profiles daemon file governor to use
 powerProfile="$(grep 'Profile=' /var/lib/power-profiles-daemon/state.ini)"
 
@@ -7,11 +18,11 @@ powerProfile="$(grep 'Profile=' /var/lib/power-profiles-daemon/state.ini)"
 numGovernors="$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors | wc -w)"
 
 # Verify if have only 2 governors available and name is powersave and performance
-# if [ "$numGovernors" = "2" -a "$(grep -o -e powersave -e performance /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors | wc -l)" = "2" ]; then
-#     performance="performance"
-#     balanced="powersave"
-#     powersave="powersave"
-# fi
+if [ "$numGovernors" = "2" -a "$(grep -o -e powersave -e performance /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors | wc -l)" = "2" ]; then
+    performance="performance"
+    balanced="powersave"
+    powersave="powersave"
+fi
 
 # Verify if have more than 2 governors and have conservative, performance and schedutil
 if [ "$numGovernors" -gt "2" -a "$(grep -o -e conservative -e performance -e schedutil /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors | wc -l)" = "3" ]; then
@@ -43,8 +54,10 @@ if [ "$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)" != "$governo
     #change configs on TLP
     if [ "$(acpi -a | awk '{print $3}' | head -n1)" = "off-line" ];then
         sed -i "/CPU_SCALING_GOVERNOR_ON_BAT=/s/CPU_SCALING_GOVERNOR_ON_BAT=.*/CPU_SCALING_GOVERNOR_ON_BAT=$governorApply/" /etc/tlp.conf
+        echo "${powerProfile##*=}" > /var/lib/power-profiles-daemon/state_bat.conf
     else
         sed -i "/CPU_SCALING_GOVERNOR_ON_AC=/s/CPU_SCALING_GOVERNOR_ON_AC=.*/CPU_SCALING_GOVERNOR_ON_AC=$governorApply/" /etc/tlp.conf
+        echo "${powerProfile##*=}" > /var/lib/power-profiles-daemon/state_ac.conf
     fi
 fi
 
