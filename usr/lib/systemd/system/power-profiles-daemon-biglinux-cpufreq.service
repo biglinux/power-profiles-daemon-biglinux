@@ -1,0 +1,7 @@
+[Unit]
+Description=Monitoring power profiles daemon to automatic change governor of proc
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/power-profiles-daemon-biglinux-cpufreq
+

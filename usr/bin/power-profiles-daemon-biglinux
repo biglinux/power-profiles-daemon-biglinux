@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Try default configuration
+sed -i 's| Environment="POWER_PROFILE_DAEMON_FAKE_DRIVER=1"|#Environment="POWER_PROFILE_DAEMON_FAKE_DRIVER=1"|g' /usr/lib/systemd/system/power-profiles-daemon-biglinux-start.service
+systemctl stop power-profiles-daemon-biglinux-start
+systemctl start power-profiles-daemon-biglinux-start
+sleep 3
+numProfiles="$(LANG=C  powerprofilesctl | grep -c Driver:)"
+
+# if have less than 3 Driver: try active pstate
+if [ $numProfiles -lt 3 ]; then
+
+    # if have amd_pstate status, added in kernel 6.3, enable this
+    if [ -e /sys/devices/system/cpu/amd_pstate/status ]; then
+        echo active > /sys/devices/system/cpu/amd_pstate/status
+        systemctl stop power-profiles-daemon-biglinux-start
+        systemctl start power-profiles-daemon-biglinux-start
+        sleep 3
+        numProfiles="$(LANG=C  powerprofilesctl | grep -c Driver:)"
+    fi
+fi
+
+# if have less than 3 Driver:, just enable with fake driver to use systemd to read value and apply directly in kernel governor configuration
+if [ $numProfiles -lt 3 ]; then
+
+    sed -i 's|#Environment="POWER_PROFILE_DAEMON_FAKE_DRIVER=1"| Environment="POWER_PROFILE_DAEMON_FAKE_DRIVER=1"|g' /usr/lib/systemd/system/power-profiles-daemon-biglinux-start.service
+    systemctl stop power-profiles-daemon-biglinux-start
+    systemctl start power-profiles-daemon-biglinux-start
+
+fi

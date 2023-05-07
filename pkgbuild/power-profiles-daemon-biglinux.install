@@ -1,0 +1,11 @@
+post_install() {
+systemctl enable power-profiles-daemon-biglinux-cpufreq.path
+systemctl mask power-profiles-daemon.service
+systemctl enable power-profiles-daemon-biglinux.service
+}
+
+pre_remove() {
+systemctl disable power-profiles-daemon-biglinux-cpufreq.path
+systemctl unmask power-profiles-daemon.service
+systemctl disable power-profiles-daemon-biglinux.service
+} 

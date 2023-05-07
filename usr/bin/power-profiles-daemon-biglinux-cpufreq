@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Read from power profiles daemon file governor to use
+powerProfile="$(grep 'Profile=' /var/lib/power-profiles-daemon/state.ini)"
+
+# Read available governors
+numGovernors="$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors | wc -w)"
+
+# Verify if have only 2 governors available and name is powersave and performance
+# if [ "$numGovernors" = "2" -a "$(grep -o -e powersave -e performance /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors | wc -l)" = "2" ]; then
+#     performance="performance"
+#     balanced="powersave"
+#     powersave="powersave"
+# fi
+
+# Verify if have more than 2 governors and have conservative, performance and schedutil
+if [ "$numGovernors" -gt "2" -a "$(grep -o -e conservative -e performance -e schedutil /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors | wc -l)" = "3" ]; then
+    performance="performance"
+    balanced="schedutil"
+    powersave="conservative"
+else
+    exit 0
+fi
+
+
+# Convert result to governor style
+if [ "${powerProfile##*=}" = "performance" ]; then
+    governorApply=$performance
+
+elif [ "${powerProfile##*=}" = "balanced" ]; then
+    governorApply=$balanced
+
+elif [ "${powerProfile##*=}" = "power-saver" ]; then
+    governorApply=$powersave
+fi
+
+
+if [ "$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)" != "$governorApply" ]; then
+
+    # Apply governor change
+    cpupower frequency-set -g $governorApply
+    # Fix to recurrent problem with daemon block
+    # systemctl restart power-profiles-daemon-biglinux-start
+fi
+

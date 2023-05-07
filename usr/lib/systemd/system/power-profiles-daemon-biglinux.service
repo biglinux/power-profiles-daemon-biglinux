@@ -1,0 +1,11 @@
+[Unit]
+Description=Power Profiles daemon configured to BigLinux
+Before=multi-user.target display-manager.target
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/power-profiles-daemon-biglinux
+RemainAfterExit=true
+
+[Install]
+WantedBy=graphical.target

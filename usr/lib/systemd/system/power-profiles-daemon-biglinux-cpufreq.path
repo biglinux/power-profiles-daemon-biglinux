@@ -1,0 +1,9 @@
+[Unit]
+Description=Monitoring power profiles daemon to automatic change governor of proc
+
+[Path]
+PathModified=/var/lib/power-profiles-daemon/state.ini
+Unit=power-profiles-daemon-biglinux-cpufreq.service
+
+[Install]
+WantedBy=graphical.target

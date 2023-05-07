@@ -1,0 +1,26 @@
+[Unit]
+Description=Power Profiles daemon starter
+Before=multi-user.target display-manager.target
+
+[Service]
+Type=dbus
+BusName=net.hadess.PowerProfiles
+ExecStart=/usr/lib/power-profiles-daemon
+Restart=on-failure
+# This always corresponds to /var/lib/power-profiles-daemon
+StateDirectory=power-profiles-daemon
+#Uncomment this to enable debug
+#Environment="POWER_PROFILE_DAEMON_FAKE_DRIVER=1"
+
+# Lockdown
+ProtectSystem=strict
+ProtectControlGroups=true
+ProtectHome=true
+ProtectKernelModules=true
+PrivateTmp=true
+RestrictAddressFamilies=AF_UNIX AF_LOCAL AF_NETLINK
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+
+[Install]
+WantedBy=graphical.target
