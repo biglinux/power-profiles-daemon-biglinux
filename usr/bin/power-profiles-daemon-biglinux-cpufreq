@@ -36,10 +36,15 @@ fi
 
 
 if [ "$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)" != "$governorApply" ]; then
-
     # Apply governor change
     cpupower frequency-set -g $governorApply
     # Fix to recurrent problem with daemon block
     # systemctl restart power-profiles-daemon-biglinux-start
+    #change configs on TLP
+    if [ "$(acpi -a | awk '{print $3}' | head -n1)" = "off-line" ];then
+        sed -i "/CPU_SCALING_GOVERNOR_ON_BAT=/s/CPU_SCALING_GOVERNOR_ON_BAT=.*/CPU_SCALING_GOVERNOR_ON_BAT=$governorApply/" /etc/tlp.conf
+    else
+        sed -i "/CPU_SCALING_GOVERNOR_ON_AC=/s/CPU_SCALING_GOVERNOR_ON_AC=.*/CPU_SCALING_GOVERNOR_ON_AC=$governorApply/" /etc/tlp.conf
+    fi
 fi
 
