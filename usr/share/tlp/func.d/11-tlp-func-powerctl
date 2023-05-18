@@ -5,9 +5,11 @@
 # Copyright (c) 2023 Bruno Goncalves <bigbruno gmail>
 # This software is licensed under the GPL v2 or later.
 
+if [ -e /var/lib/power-profiles-daemon/state_bat.conf ]; then
 
-if [ "$(acpi -a | awk '{print $3}' | head -n1)" = "off-line" ];then
-    powerprofilesctl set $(cat /var/lib/power-profiles-daemon/state_bat.conf)
-else
-    powerprofilesctl set $(cat /var/lib/power-profiles-daemon/state_ac.conf)
+    if [ "$(acpi -a | awk '{print $3}' | head -n1)" = "off-line" ];then
+        powerprofilesctl set $(cat /var/lib/power-profiles-daemon/state_bat.conf)
+    else
+        powerprofilesctl set $(cat /var/lib/power-profiles-daemon/state_ac.conf)
+    fi
 fi
