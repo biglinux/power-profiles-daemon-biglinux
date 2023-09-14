@@ -1,0 +1,11 @@
+[Unit]
+Description=Save Backlight BigLinux
+DefaultDependencies=no
+Before=shutdown.target
+
+[Service]
+Type=oneshot
+ExecStart=-/usr/bin/biglinux-backlight-save
+
+[Install]
+WantedBy=reboot.target kexec.target

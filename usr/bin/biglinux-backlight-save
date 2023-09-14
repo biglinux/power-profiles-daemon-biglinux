@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [[ -n /sys/class/backlight/* ]]; then
+    cd /sys/class/backlight/
+	rm -Rf /etc/bigbacklight 2> /dev/null
+	mkdir /etc/bigbacklight 2> /dev/null
+	IFS=$'\n'
+	for i in *
+	do
+		cat "/sys/class/backlight/$i/brightness" > "/etc/bigbacklight/$i"
+	done
+fi
+
+
+

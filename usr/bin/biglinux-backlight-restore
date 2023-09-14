@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# remove problematic config from systemd backlight
+# rm /var/lib/systemd/backlight/*backlight:amdgpu* 2> /dev/null
+
+if [[ -n /etc/bigbacklight/* ]]; then
+    cd /etc/bigbacklight
+    IFS=$'\n'
+    for i in *
+    do
+        cat "/etc/bigbacklight/$i" > "/sys/class/backlight/$i/brightness"
+    done
+fi

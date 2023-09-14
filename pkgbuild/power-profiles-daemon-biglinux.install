@@ -2,10 +2,19 @@ post_install() {
 systemctl enable --now power-profiles-daemon-biglinux-cpufreq.path
 systemctl mask power-profiles-daemon.service
 systemctl enable --now power-profiles-daemon-biglinux.service
+systemctl enable --now biglinux-backlight-restore.service
+systemctl enable --now biglinux-backlight-save.service
 }
 
 pre_remove() {
 systemctl disable --now power-profiles-daemon-biglinux-cpufreq.path
 systemctl unmask power-profiles-daemon.service
 systemctl disable --now power-profiles-daemon-biglinux.service
-} 
+systemctl disable --now biglinux-backlight-restore.service
+systemctl disable --now biglinux-backlight-save.service
+}
+
+post_upgrade() {
+systemctl enable --now biglinux-backlight-restore.service
+systemctl enable --now biglinux-backlight-save.service
+}

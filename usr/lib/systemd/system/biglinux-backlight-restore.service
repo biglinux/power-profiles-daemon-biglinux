@@ -1,0 +1,14 @@
+[Unit]
+Description=Restore Backlight BigLinux
+After=systemd-backlight@.service getty@tty1.service display-manager.service
+DefaultDependencies=no
+
+[Service]
+Type=forking
+RemainAfterExit=yes
+ExecStart=-/usr/bin/biglinux-backlight-restore
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
