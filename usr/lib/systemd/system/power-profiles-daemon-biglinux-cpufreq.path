@@ -1,5 +1,7 @@
 [Unit]
 Description=Monitoring power profiles daemon to automatic change governor of proc
+StartLimitIntervalSec=60s
+StartLimitBurst=60
 
 [Path]
 PathModified=/var/lib/power-profiles-daemon/state.ini

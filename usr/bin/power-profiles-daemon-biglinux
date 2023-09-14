@@ -12,6 +12,7 @@ if [ $numProfiles -lt 3 ]; then
 
     # if have amd_pstate status, added in kernel 6.3, enable this
     if [ -e /sys/devices/system/cpu/amd_pstate/status ]; then
+        echo passive > /sys/devices/system/cpu/amd_pstate/status
         echo active > /sys/devices/system/cpu/amd_pstate/status
         systemctl stop power-profiles-daemon-biglinux-start
         systemctl start power-profiles-daemon-biglinux-start
