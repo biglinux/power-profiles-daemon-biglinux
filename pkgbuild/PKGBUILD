@@ -28,7 +28,7 @@ package() {
 
     if [ -d "${InternalDir}/etc" ]; then
         cp -r "${InternalDir}/etc" "${pkgdir}/"
-        chmod 750 "${pkgdir}/etc/"${pkgdir}/""
+        chmod 750 "${pkgdir}/etc/sudoers.d"
     fi
 
     if [ -d "${InternalDir}/opt" ]; then
