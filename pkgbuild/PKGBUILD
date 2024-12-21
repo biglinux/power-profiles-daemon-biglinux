@@ -6,6 +6,7 @@ pkgrel=$(date +%H%M)
 arch=('any')
 license=('GPL')
 depends=('power-profiles-daemon' 'cpupower')
+conflicts=('tlp' 'biglinux-tlp-config' 'tlpui')
 url="https://github.com/biglinux/power-profiles-daemon-biglinux"
 pkgdesc="Sync KDE places and GTK bookmarks"
 source=("git+https://github.com/biglinux/power-profiles-daemon-biglinux.git")
