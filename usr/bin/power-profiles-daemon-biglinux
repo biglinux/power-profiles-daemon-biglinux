@@ -29,3 +29,14 @@ if [ $numProfiles -lt 3 ]; then
     systemctl start power-profiles-daemon-biglinux-start
 
 fi
+
+# power-profiles-daemon does not rewrite state.ini when it starts, so the .path
+# unit does not fire at boot and the saved profile's governor is not set.
+# The cpufreq driver may still be loading, so wait for it for a while.
+if [ -e /var/lib/power-profiles-daemon/state.ini ]; then
+    for _ in {1..30}; do
+        [ -e /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ] && break
+        sleep 1
+    done
+    /usr/bin/power-profiles-daemon-biglinux-cpufreq
+fi
